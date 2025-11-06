@@ -1,8 +1,6 @@
-// src/components/Todo.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './style.css';
-// import config from './config.js';
 
 const Todo = () => {
   const [todos, setTodos] = useState([]);
@@ -12,11 +10,12 @@ const Todo = () => {
   const [message, setMessage] = useState('');
   const [editMode, setEditMode] = useState(false);
 
-  const baseUrl = (config && config.url) ? `${config.url}/todoapi` : '/api/todoapi';
+  // ✅ Use Vite environment variable for backend URL
+  const baseUrl = `${import.meta.env.VITE_API_URL}/todoapi`;
 
+  // Fetch all todos on mount
   useEffect(() => {
-    (async () => { try { await fetchAllTodos(); } catch (e) { console.error(e); } })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchAllTodos();
   }, []);
 
   const fetchAllTodos = async () => {
@@ -30,7 +29,6 @@ const Todo = () => {
     }
   };
 
-  // Handle controlled inputs (ID allowed)
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
@@ -48,7 +46,6 @@ const Todo = () => {
   const addTodo = async () => {
     if (!validateForm()) return;
     try {
-      // include id if user provided it (server may ignore or validate)
       const payload = { title: todo.title, description: todo.description, completed: todo.completed };
       if (todo.id !== '' && todo.id !== null) payload.id = todo.id;
       await axios.post(`${baseUrl}/add`, payload);
@@ -86,7 +83,10 @@ const Todo = () => {
   };
 
   const getTodoById = async () => {
-    if (!idToFetch) { setMessage('Please enter an ID to fetch.'); return; }
+    if (!idToFetch) {
+      setMessage('Please enter an ID to fetch.');
+      return;
+    }
     try {
       const res = await axios.get(`${baseUrl}/get/${idToFetch}`);
       setFetchedTodo(res.data);
@@ -129,12 +129,11 @@ const Todo = () => {
         <h3>{editMode ? 'Edit Todo' : 'Add Todo'}</h3>
 
         <div className="form-grid">
-          {/* ID is editable always */}
           <input
             type="text"
             inputMode="numeric"
             name="id"
-            placeholder="ID (type or leave blank)"
+            placeholder="ID (optional)"
             value={todo.id || ''}
             onChange={handleChange}
           />
@@ -156,7 +155,12 @@ const Todo = () => {
           />
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <input type="checkbox" name="completed" checked={!!todo.completed} onChange={handleChange} />
+            <input
+              type="checkbox"
+              name="completed"
+              checked={!!todo.completed}
+              onChange={handleChange}
+            />
             Completed
           </label>
         </div>
@@ -175,7 +179,12 @@ const Todo = () => {
 
       <div style={{ marginTop: 20 }}>
         <h3>Get Todo By ID</h3>
-        <input type="text" value={idToFetch} onChange={(e) => setIdToFetch(e.target.value)} placeholder="Enter ID" />
+        <input
+          type="text"
+          value={idToFetch}
+          onChange={(e) => setIdToFetch(e.target.value)}
+          placeholder="Enter ID"
+        />
         <button className="btn-blue" onClick={getTodoById}>Fetch</button>
 
         {fetchedTodo && (
