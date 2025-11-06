@@ -32,7 +32,7 @@ jobs:
           context: ./todo-BACKEND
           file: ./todo-BACKEND/backend.Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/ansible-backendPractice:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/ansible-backendpractice:latest
 
       # Step 5 — Build & Push Frontend Image
       - name: Build and Push Frontend Image
@@ -41,4 +41,4 @@ jobs:
           context: ./todo-FRONTEND
           file: ./todo-FRONTEND/frontend.Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/ansible-frontendPractice:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/ansible-frontendpractice:latest
